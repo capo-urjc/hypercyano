@@ -68,6 +68,11 @@ hypercyano/
 
 
 ## License
+HyperCyano offers two licensing options to suit different needs:
+
+**AGPL-3.0 License**: This OSI-approved open-source license is perfect for students, researchers, and enthusiasts. It encourages open collaboration and knowledge sharing. See the [LICENSE](https://github.com/capo-urjc/hypercyano/tree/main?tab=AGPL-3.0-1-ov-file) file for full details.
+
+**Enterprise License**: Designed for commercial use, this license permits using this software for commercial solutions, bypassing the open-source requirements of AGPL-3.0. Please contact us for more details.
 
 ## Acknowledgments
 
