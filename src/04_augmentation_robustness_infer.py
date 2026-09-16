@@ -21,7 +21,9 @@ import hsi_splits as S
 MODELS_DIR  = Path("../models/04")
 RESULTS_DIR = Path("../results/04")
 VARIANTS   = ["baseline", "robust"]
-SEVERITIES = np.linspace(0.0, 1.0, 11)
+# 1 decimal is enough: severity values are 0.0, 0.1, ..., 1.0.
+# Rounding avoids floating-point artifacts like 0.30000000000000004 in the CSV.
+SEVERITIES = np.round(np.linspace(0.0, 1.0, 11), 1)
 THRESHOLD  = 0.5
 COLORS     = {"baseline": "#e74c3c", "robust": "#2ecc71"}
 SEEDS      = range(42, 52)
