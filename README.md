@@ -81,6 +81,7 @@ HyperCyano offers two licensing options to suit different needs:
 - Tarek Elshami-Ahmed - `tarek.elshami@urjc.es`
 - L. Llopis-Ibor - `laura.llopis@urjc.es`
 - Juan J. Pantrigo - `juanjose.pantrigo@urjc.es`
+- Alfredo Cuesta-Infante - `alfredo.cuesta@urjc.es`
 - Raúl Cabido - `raul.cabido@urjc.es`
 
 Universidad Rey Juan Carlos, Móstoles, Spain
