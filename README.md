@@ -32,6 +32,8 @@ the reported metrics come from the experimental setup and not from the model.
 
 ## Installation
 
+Tested with Python 3.13.
+
 ```bash
 git clone https://github.com/capo-urjc/hypercyano.git
 cd hypercyano
