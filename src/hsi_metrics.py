@@ -22,6 +22,16 @@ def compute_metrics(y_true, y_pred, multilabel=False):
             "exact_match": accuracy_score(y_true, y_pred)}
 
 
+def rmse(a, b):
+    return float(np.sqrt(np.mean((a - b) ** 2)))
+
+
+def grad_rmse(a, b, wavelengths):
+    """RMSE between the derivatives of two spectra (np.gradient, real
+    wavelength spacing). Used by script 04 on SNV-normalised spectra."""
+    return rmse(np.gradient(a, wavelengths), np.gradient(b, wavelengths))
+
+
 def summarise(rows, group_keys, metrics=("accuracy", "f1", "kappa")):
     df = pd.DataFrame(rows)
     out = df.groupby(list(group_keys)).agg({m: ["mean", "std"] for m in metrics})

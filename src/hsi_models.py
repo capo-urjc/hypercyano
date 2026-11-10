@@ -16,18 +16,18 @@ RF_PARAMS = dict(n_estimators=200, max_depth=None, min_samples_split=2,
 
 # Fournier et al. replication (scripts 01 and 02)
 NN_EPOCHS_FOURNIER = 100
-NN_BATCH_FOURNIER  = 32
+NN_BATCH_FOURNIER = 32
 
 # Adapted config (scripts 03 and 04)
-NN_BATCH    = 2048
-NN_EPOCHS   = 2000
+NN_BATCH = 2048
+NN_EPOCHS = 2000
 NN_PATIENCE = 50
 
 
 def build_fournier_nn(input_dim, n_outputs, multilabel=False):
     out_act = "sigmoid" if multilabel else "softmax"
-    loss    = "binary_crossentropy" if multilabel else "sparse_categorical_crossentropy"
-    metric  = keras.metrics.BinaryAccuracy(name="accuracy") if multilabel else "accuracy"
+    loss = "binary_crossentropy" if multilabel else "sparse_categorical_crossentropy"
+    metric = keras.metrics.BinaryAccuracy(name="accuracy") if multilabel else "accuracy"
 
     model = keras.Sequential([
         layers.Input(shape=(input_dim,)),
@@ -39,6 +39,7 @@ def build_fournier_nn(input_dim, n_outputs, multilabel=False):
     ])
     model.compile(optimizer="adam", loss=loss, metrics=[metric])
     return model
+
 
 # Scripts 03 and 04
 def default_callbacks():
@@ -97,25 +98,65 @@ def clear_session():
     gc.collect()
 
 
-class AugmentedSequence(Sequence):
-    """Augments each RAW batch then applies SNV. Pool is the full training set."""
+def build_sweep_nn(config, input_dim, n_outputs):
+    """Dynamic MLP for WandB sweep (script 05). n_layers hidden blocks,
+    each halving the previous size (min 16): Dense -> [BN] -> ReLU -> Dropout.
+    Output: Dense(n_outputs, sigmoid), binary_crossentropy, BinaryAccuracy."""
+    reg  = keras.regularizers.l2(config["l2_reg"])
+    size = config["first_layer_size"]
 
-    def __init__(self, X_raw, y, bio, seed):
+    inp = layers.Input(shape=(input_dim,))
+    x   = inp
+    for _ in range(config["n_layers"]):
+        x    = layers.Dense(max(size, 16), kernel_regularizer=reg)(x)
+        if config["batch_norm"]:
+            x = layers.BatchNormalization()(x)
+        x    = layers.Activation("relu")(x)
+        x    = layers.Dropout(config["dropout"])(x)
+        size = max(size // 2, 1)
+
+    x = layers.Dense(n_outputs, activation="sigmoid", kernel_regularizer=reg)(x)
+
+    opts = {"adam": keras.optimizers.Adam, "adamw": keras.optimizers.AdamW,
+            "sgd":  keras.optimizers.SGD,  "rmsprop": keras.optimizers.RMSprop}
+    model = keras.Model(inputs=inp, outputs=x)
+    model.compile(optimizer=opts[config["optimizer"]](learning_rate=config["learning_rate"]),
+                  loss="binary_crossentropy",
+                  metrics=[keras.metrics.BinaryAccuracy(name="accuracy")])
+    return model
+
+
+class MatchedAugmentedSequence(Sequence):
+    """Augments each RAW batch with a SINGLE FIXED (technique, value) pair
+    (the 'matched' model for one grid point), applying it to each sample
+    independently with probability p_aug -- the rest of the batch stays raw.
+    Then applies SNV, exactly like the old AugmentedSequence did. Pool for
+    Mixup partners is the full raw training set (X_raw)."""
+
+    def __init__(self, X_raw, y, bio, technique, value, seed, p_aug=0.5, batch_size=NN_BATCH):
         super().__init__(workers=1, use_multiprocessing=False, max_queue_size=10)
-        self.X   = np.asarray(X_raw)
-        self.y   = np.asarray(y)
+        self.X = np.asarray(X_raw)
+        self.y = np.asarray(y)
         self.bio = np.asarray(bio)
-        self.rng         = np.random.default_rng(seed)
+        self.technique = technique
+        self.value = value
+        self.p_aug = p_aug
+        self.batch_size = batch_size
+        self.rng = np.random.default_rng(seed)
         self.shuffle_rng = np.random.default_rng(seed + 777)
-        self.indices     = np.arange(len(self.X))
+        self.indices = np.arange(len(self.X))
         self.on_epoch_end()
 
     def __len__(self):
-        return int(np.ceil(len(self.X) / NN_BATCH))
+        return int(np.ceil(len(self.X) / self.batch_size))
 
     def __getitem__(self, idx):
-        batch = self.indices[idx * NN_BATCH:(idx + 1) * NN_BATCH]
-        Xb = aug.augment_batch(self.X[batch], self.bio[batch], self.X, self.bio, self.rng)
+        batch = self.indices[idx * self.batch_size:(idx + 1) * self.batch_size]
+        Xb = self.X[batch].copy()
+        for i in range(len(batch)):
+            if self.rng.random() < self.p_aug:
+                Xb[i] = aug.apply(Xb[i], self.rng, self.technique, self.value,
+                                  self.X, self.bio, self.bio[batch[i]])
         return snv(Xb), self.y[batch]
 
     def on_epoch_end(self):

@@ -2,8 +2,6 @@ import numpy as np
 
 TECHNIQUES = ["AddN", "MultN", "Shift", "Mask", "Mixup_interclass", "Poisson"]
 
-MAX = {"AddN": 0.01, "MultN": 0.012, "Shift": 5, "Mask": 75, "Mixup_interclass": 0.5, "Poisson": 1000.0}
-
 
 # --- primitives ---
 
@@ -21,21 +19,31 @@ def spectral_shift(x, rng, max_shift):
         return x.copy()
     out = np.empty_like(x)
     if n > 0:
-        out[n:] = x[:-n]; out[:n] = x[0]
+        out[n:] = x[:-n]
+        out[:n] = x[0]
     else:
-        out[:n] = x[-n:]; out[n:] = x[-1]
+        out[:n] = x[-n:]
+        out[n:] = x[-1]
     return out
 
 
 def band_masking(x, rng, n_bands):
-    out = x.copy()
-    for i in rng.choice(len(x), size=min(n_bands, len(x)), replace=False):
-        if 0 < i < len(x) - 1:
-            out[i] = 0.5 * (out[i - 1] + out[i + 1])
-        elif i == 0:
-            out[i] = out[1]
-        else:
-            out[i] = out[i - 1]
+    n = len(x)
+    n_bands = min(n_bands, n)
+    if n_bands <= 0:
+        return x.copy()
+
+    masked_idx = rng.choice(n, size=n_bands, replace=False)
+    mask = np.zeros(n, dtype=bool)
+    mask[masked_idx] = True
+    valid_idx = np.where(~mask)[0]
+
+    if len(valid_idx) == 0:
+        return np.full_like(x, np.mean(x))
+
+    out = x.copy().astype(float, copy=True)
+    positions = np.arange(n)
+    out[mask] = np.interp(positions[mask], positions[valid_idx], x[valid_idx])
     return out
 
 
@@ -53,32 +61,55 @@ def noise_poisson(x, rng, scale):
 
 # --- composed ---
 
-def corrupt_one(x, rng, technique, severity, X_pool, bio_pool, bio_type):
-    """Apply one technique at severity in [0, 1]. Poisson always runs at fixed scale."""
+def apply(x, rng, technique, value, X_pool, bio_pool, bio_type):
+    """Apply `technique` at `value`: sigma, number of bands, lambda or Poisson scale."""
     if technique == "AddN":
-        return noise_additive(x, rng, severity * MAX["AddN"])
+        return noise_additive(x, rng, value)
     if technique == "MultN":
-        return noise_multiplicative(x, rng, severity * MAX["MultN"])
+        return noise_multiplicative(x, rng, value)
     if technique == "Shift":
-        n = int(round(severity * MAX["Shift"]))
+        n = int(round(value))
         return spectral_shift(x, rng, n) if n > 0 else x.copy()
     if technique == "Mask":
-        n = int(round(severity * MAX["Mask"]))
+        n = int(round(value))
         return band_masking(x, rng, n) if n > 0 else x.copy()
     if technique == "Mixup_interclass":
-        return mixup_interclass(x, rng, 1.0 - severity * MAX["Mixup_interclass"], X_pool, bio_pool, bio_type)
+        return mixup_interclass(x, rng, value, X_pool, bio_pool, bio_type)
     if technique == "Poisson":
-        return noise_poisson(x, rng, MAX["Poisson"])
+        return noise_poisson(x, rng, value)
     raise ValueError(f"unknown technique: {technique}")
 
 
-def augment_batch(X, bio, X_pool, bio_pool, rng):
-    """Pick one technique uniformly (including None) at a random severity."""
-    options = TECHNIQUES + ["None"]
-    out = X.copy()
-    for i in range(len(X)):
-        technique = rng.choice(options)
-        if technique != "None":
-            out[i] = corrupt_one(X[i], rng, technique, rng.uniform(0.0, 1.0),
-                                 X_pool, bio_pool, bio[i])
-    return out
+# --- sweep grid ---
+
+GRID_SIZE = {
+    "AddN": 16, "MultN": 16, "Shift": 16, "Mask": 16,
+    "Mixup_interclass": 6, "Poisson": 16,
+}
+
+
+def grid_for(technique, n_bands):
+    if technique == "AddN":
+        return np.linspace(0.0, 0.03, GRID_SIZE["AddN"])
+    if technique == "MultN":
+        return np.linspace(0.0, 0.036, GRID_SIZE["MultN"])
+    if technique == "Shift":
+        return np.arange(GRID_SIZE["Shift"])
+    if technique == "Mask":
+        return np.round(np.linspace(0, n_bands, GRID_SIZE["Mask"])).astype(int)
+    if technique == "Mixup_interclass":
+        return np.array([1.0, 0.9, 0.8, 0.7, 0.6, 0.5])
+    if technique == "Poisson":
+        return np.geomspace(10.0, 5000.0, GRID_SIZE["Poisson"])
+    raise ValueError(f"unknown technique: {technique}")
+
+
+def value_str(technique, value):
+    """String of a grid value, used in the model folder names."""
+    if technique in ("Shift", "Mask"):
+        return str(int(round(value)))
+    if technique == "Mixup_interclass":
+        return f"{value:.2f}"
+    if technique == "Poisson":
+        return f"{value:.3f}"
+    return f"{value:.6f}"
