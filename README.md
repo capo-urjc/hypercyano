@@ -11,7 +11,7 @@ It builds on the Random Forest and feed-forward network of Fournier et al.,
 whose architectures are kept unchanged in experiments 1–4, so differences in
 the reported metrics come from the experimental setup and not from the model.
 
-## ✨ Key Features
+## Key Features
 
 - **Image-wise evaluation.** Replicates the spectral-wise protocol of
   Fournier et al. and complements it with an image-wise one, in which all
@@ -30,7 +30,7 @@ the reported metrics come from the experimental setup and not from the model.
 - **Hyperparameter search.** Bayesian sweep of the multi-label network without
   augmentation.
 
-## 📦 Installation
+## Installation
 
 ```bash
 git clone https://github.com/capo-urjc/hypercyano.git
@@ -44,7 +44,7 @@ The spectra workbook is the dataset published with the paper. Place it at
 `data/cyanobacterial_spectra_processed_clean.xlsx` (or pass `--file` with a
 different path to any script).
 
-## 🚀 Usage
+## Usage
 
 Experiments 1–4 are `train`/`infer` pairs: `train` fits the preprocessing and
 the models and saves them; `infer` loads them, evaluates them and writes
@@ -119,9 +119,9 @@ This work was supported by:
 - R&D project PID2024-156033OB-C32 funded by MICIU/AEI/10.13039/501100011033 and FEDER, UE.
 - R&D project PID2024-157492OB-I00 funded by MICIU/AEI/10.13039/501100011033 and FEDER, UE.
 
-## 👥 Authors
+## Authors
 
-- Tarek Elshami-Ahmed (📧corresponding author) - `tarek.elshami@urjc.es`
+- Tarek Elshami-Ahmed (corresponding author) - `tarek.elshami@urjc.es`
 - Laura Llopis-Ibor - `laura.llopis@urjc.es`
 - Juan J. Pantrigo - `juanjose.pantrigo@urjc.es`
 - Alfredo Cuesta-Infante - `alfredo.cuesta@urjc.es`
