@@ -87,7 +87,8 @@ preprocessing, models and metrics are identical across experiments.
 
 ```
 hypercyano/
-├── data/                          # spectra workbook (not versioned)
+├── data/
+│   ├── cyanobacterial_spectra_processed_clean.xlsx
 ├── models/                        # saved models + preprocessors (not versioned)
 ├── results/                       # tables (not versioned)
 ├── src/
