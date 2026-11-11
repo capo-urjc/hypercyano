@@ -29,9 +29,11 @@ pip install -r requirements.txt
 ```
 
 ### Dataset
-
-The spectra come from the public Zenodo record by Fournier et al. ([10.5281/zenodo.14056022](https://doi.org/10.5281/zenodo.14056022), CC-BY-4.0). The raw workbook contains duplicated rows, so a helper script downloads it, removes the duplicates and writes the cleaned file to `data/cyanobacterial_spectra_processed_clean.xlsx`:
-
+ 
+The cleaned dataset is already included in this repository at `data/cyanobacterial_spectra_processed_clean.xlsx`, so you don't need to download anything to run the experiments.
+ 
+It is derived from the public dataset by Fournier et al. ([10.5281/zenodo.14056022](https://doi.org/10.5281/zenodo.14056022), CC-BY-4.0), after removing duplicate rows. To regenerate it from the original source:
+ 
 ```bash
 cd src
 python download_dataset.py
