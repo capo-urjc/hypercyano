@@ -28,9 +28,14 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-The spectra workbook is the dataset published with the paper. Place it at
-`data/cyanobacterial_spectra_processed_clean.xlsx` (or pass `--file` with a
-different path to any script).
+### Dataset
+
+The spectra come from the public Zenodo record by Fournier et al. ([10.5281/zenodo.14056022](https://doi.org/10.5281/zenodo.14056022), CC-BY-4.0). The raw workbook contains duplicated rows, so a helper script downloads it, removes the duplicates and writes the cleaned file to `data/cyanobacterial_spectra_processed_clean.xlsx`:
+
+```bash
+cd src
+python download_dataset.py
+```
 
 ## Usage
 
@@ -80,6 +85,7 @@ hypercyano/
 ├── models/                        # saved models + preprocessors (not versioned)
 ├── results/                       # tables (not versioned)
 ├── src/
+│   ├── download_dataset.py        # downloads the Zenodo dataset and removes duplicate rows
 │   ├── hsi_data.py                # loading and labels
 │   ├── hsi_splits.py              # image-wise and spectral-wise splits
 │   ├── hsi_preprocessing.py       # fournier / snv pipelines, fitted and persisted
