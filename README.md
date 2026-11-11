@@ -1,34 +1,20 @@
-# HyperCyano
+# Beyond spectral-wise evaluation: Generalization-aware multi-label learning for hyperspectral cyanobacteria identification
 
-**Beyond spectral-wise evaluation: Generalization-aware multi-label learning for
-hyperspectral cyanobacteria identification**
+This repository provides the code and experimental framework developed to identify cyanobacterial species in hyperspectral images using machine learning. The study focuses on evaluating model generalization to unseen acquisitions, improving the scalability of mixture identification through multi-label classification, and assessing robustness to spectral variations.
 
-**HyperCyano** studies how the evaluation protocol, the preprocessing, the
-label formulation and data augmentation affect the generalization of
-hyperspectral classifiers for cyanobacterial genera to unseen acquisitions.
-
-It builds on the Random Forest and feed-forward network of Fournier et al.,
-whose architectures are kept unchanged in experiments 1–4, so differences in
-the reported metrics come from the experimental setup and not from the model.
+The experiments build on the Random Forest and feed-forward neural network proposed by Fournier et al., allowing direct comparisons with previously reported results.
 
 ## Key Features
 
-- **Image-wise evaluation.** Replicates the spectral-wise protocol of
-  Fournier et al. and complements it with an image-wise one, in which all
-  spectra of an acquisition fall in the same partition, to measure
-  generalization to unseen acquisitions.
-- **Preprocessing.** Compares Savitzky-Golay + StandardScaler (as in
-  Fournier et al.) against Standard Normal Variate (SNV).
-- **Multi-label identification.** Predicts which genera are present in a
-  sample instead of a single composite class, so each species is represented
-  independently and the formulation scales to mixtures.
-- **Robustness to spectral perturbations.** Under progressive synthetic
-  perturbations (additive and multiplicative noise, shift, band masking, mixup
-  and Poisson shot noise), compares a never-augmented baseline (SNV only)
-  against networks trained with each technique, revealing where the models are
-  robust and where they are sensitive.
-- **Hyperparameter search.** Bayesian sweep of the multi-label network without
-  augmentation.
+- **Image-wise evaluation.** Introduces an evaluation protocol that separates training, validation, and testing at the hyperspectral-image level, preventing information leakage between acquisitions and providing a more realistic assessment of model generalization.
+
+- **Spectral preprocessing.** Compares the original StandardScaler and Savitzky-Golay preprocessing pipeline with Standard Normal Variate (SNV) normalization.
+
+- **Multi-label classification.** Reformulates cyanobacterial mixture identification by independently predicting the presence of each species, avoiding the need to define every possible combination as a separate class.
+
+- **Robustness assessment.** Evaluates model sensitivity to seven types of spectral perturbations at increasing intensity levels, including noise, illumination variations, spectral shifts, and band masking. It also examines whether perturbation-specific training improves robustness.
+
+- **Hyperparameter optimization.** Explores neural network configurations through Bayesian optimization to assess potential improvements in multi-label classification performance.
 
 ## Installation
 
