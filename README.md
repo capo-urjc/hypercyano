@@ -63,63 +63,78 @@ python download_dataset.py
 
 ## Usage
 
-Experiments 1–4 are `train`/`infer` pairs: `train` fits the preprocessing and
-the models and saves them; `infer` loads them, evaluates them and writes
-tables. All scripts are run from `src/`.
+The repository contains five experiments corresponding to the analyses presented in the paper. Experiments 1–4 use separate training (`train`) and evaluation (`infer`) scripts. Training scripts fit and save the models and preprocessing pipelines, while evaluation scripts load them and generate the results.
+
+All scripts should be executed from the `src/` directory.
 
 ```bash
 cd src
 
-# 1. Fournier et al. replication: spectral-wise split vs image-wise split.
+# 1. Image-wise evaluation
+# Compare spectral-wise and image-wise evaluation protocols using the
+# reference models from Fournier et al.
 python 01_fournier_replication_train.py
 python 01_fournier_replication_infer.py
 
-# 2. Preprocessing comparison with the image-wise split:
-#    Savitzky-Golay + StandardScaler vs SNV.
+# 2. Spectral preprocessing
+# Compare StandardScaler + Savitzky-Golay with SNV normalization
+# under the image-wise evaluation protocol.
 python 02_preprocessing_comparison_train.py
 python 02_preprocessing_comparison_infer.py
 
-# 3. Multi-label genus presence instead of single composite classes.
+# 3. Multi-label classification
+# Predict the presence of individual cyanobacterial species
+# instead of treating each mixture as a separate class.
 python 03_multilabel_train.py
 python 03_multilabel_infer.py
 
-# 4. On that same multi-label task: Baseline (SNV) vs augmentation-trained
-#    networks under synthetic sensor corruption, technique by technique.
-#    Uses the baseline models of step 3.
+# 4. Robustness assessment
+# Evaluate model sensitivity to progressive spectral perturbations
+# and compare baseline models with perturbation-trained networks.
+# Uses the baseline models from experiment 3.
 python 04_matched_train.py
 python 04_matched_infer.py
 
-# 5. Hyperparameter sweep of the multi-label network (needs `wandb login`).
+# 5. Hyperparameter optimization
+# Bayesian optimization of the multi-label neural network.
+# Requires Weights & Biases authentication (wandb login).
 python 05_sweep_final.py
 ```
 
-Models and fitted preprocessors go to `models/<experiment>/` and results to
-`results/<experiment>/`. Run `python <script>.py --help` to see the options of
-each script.
+Trained models and preprocessing pipelines are saved in `models/<experiment>/`, while evaluation results are stored in `results/<experiment>/`.
+
+To view the available options for each script, run:
+
+```bash
+python <script>.py --help
+```
 
 ### Repository layout
 
-The `hsi_*` modules hold everything the scripts share, so the splitter,
-preprocessing, models and metrics are identical across experiments.
+The repository is organized into experiment scripts and shared modules for data handling, preprocessing, model training, and evaluation.
 
-```
+```text
 hypercyano/
 ├── data/
-│   ├── cyanobacterial_spectra_processed_clean.xlsx
-├── models/                        # saved models + preprocessors (not versioned)
-├── results/                       # tables (not versioned)
+│   └── cyanobacterial_spectra_processed_clean.xlsx
+├── models/                        # Saved models and preprocessors (not versioned)
+├── results/                       # Experimental results (not versioned)
 ├── src/
-│   ├── download_dataset.py        # downloads the Zenodo dataset and removes duplicate rows
-│   ├── hsi_data.py                # loading and labels
-│   ├── hsi_splits.py              # image-wise and spectral-wise splits
-│   ├── hsi_preprocessing.py       # fournier / snv pipelines, fitted and persisted
-│   ├── hsi_models.py              # Random Forest and network: train, predict, save, load
-│   ├── hsi_augmentations.py       # spectral augmentation primitives
-│   ├── hsi_metrics.py             # metrics and summaries
-│   ├── 01_fournier_replication_train.py / _infer.py
-│   ├── 02_preprocessing_comparison_train.py / _infer.py
-│   ├── 03_multilabel_train.py / _infer.py
-│   ├── 04_matched_train.py / _infer.py
+│   ├── download_dataset.py        # Dataset download and duplicate removal
+│   ├── hsi_data.py                # Data loading and label processing
+│   ├── hsi_splits.py              # Spectral-wise and image-wise data splitting
+│   ├── hsi_preprocessing.py       # Spectral preprocessing pipelines
+│   ├── hsi_models.py              # Model training, prediction, saving, and loading
+│   ├── hsi_augmentations.py       # Spectral perturbations
+│   ├── hsi_metrics.py             # Evaluation metrics and result summaries
+│   ├── 01_fournier_replication_train.py
+│   ├── 01_fournier_replication_infer.py
+│   ├── 02_preprocessing_comparison_train.py
+│   ├── 02_preprocessing_comparison_infer.py
+│   ├── 03_multilabel_train.py
+│   ├── 03_multilabel_infer.py
+│   ├── 04_matched_train.py
+│   ├── 04_matched_infer.py
 │   └── 05_sweep_final.py
 └── requirements.txt
 ```
