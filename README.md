@@ -2,7 +2,7 @@
 
 This repository provides the code and experimental framework developed to identify cyanobacterial species in hyperspectral images using machine learning. The study focuses on evaluating model generalization to unseen acquisitions, improving the scalability of mixture identification through multi-label classification, and assessing robustness to spectral variations.
 
-The experiments build on the Random Forest and feed-forward neural network proposed by Fournier et al., allowing direct comparisons with previously reported results.
+The experiments build on the Random Forest and feed-forward neural network proposed by [Fournier et al. (2025)](https://doi.org/10.1016/j.knosys.2025.113794), allowing direct comparisons with previously reported results.
 
 ## Key Features
 
