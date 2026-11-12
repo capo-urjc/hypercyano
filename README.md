@@ -18,22 +18,44 @@ The experiments build on the Random Forest and feed-forward neural network propo
 
 ## Installation
 
-Tested with Python 3.13.
+The code has been tested with Python 3.13.
+
+Clone the repository and install the required dependencies:
 
 ```bash
 git clone https://github.com/capo-urjc/hypercyano.git
 cd hypercyano
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+```
+
+Activate the virtual environment:
+
+**Linux/macOS:**
+
+```bash
+source .venv/bin/activate
+```
+
+**Windows (Command Prompt):**
+
+```cmd
+.venv\Scripts\activate.bat
+```
+
+Install the dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Dataset
- 
-The cleaned dataset is already included in this repository at `data/cyanobacterial_spectra_processed_clean.xlsx`, so you don't need to download anything to run the experiments.
- 
-It is derived from the public dataset by Fournier et al. ([10.5281/zenodo.14056022](https://doi.org/10.5281/zenodo.14056022), CC-BY-4.0), after removing duplicate rows. To regenerate it from the original source:
- 
+## Dataset
+
+The processed dataset is included in the repository at `data/cyanobacterial_spectra_processed_clean.xlsx`. No additional downloads are required to run the experiments.
+
+The dataset is derived from the publicly available data published by Fournier et al. ([Zenodo, DOI: 10.5281/zenodo.14056022](https://doi.org/10.5281/zenodo.14056022), CC BY 4.0), with duplicate rows removed.
+
+To regenerate the processed dataset from the original source, run:
+
 ```bash
 cd src
 python download_dataset.py
