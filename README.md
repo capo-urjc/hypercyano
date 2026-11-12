@@ -154,6 +154,13 @@ This work was supported by:
 - R&D project PID2024-156033OB-C32 funded by MICIU/AEI/10.13039/501100011033 and FEDER, UE.
 - R&D project PID2024-157492OB-I00 funded by MICIU/AEI/10.13039/501100011033 and FEDER, UE.
 
+<p>
+  <img src="https://github.com/user-attachments/assets/be95a452-151f-4cfb-917f-9af06e32a33d"
+       alt="Funding acknowledgments"
+       width="800">
+</p>
+
+
 ## Authors
 
 - Tarek Elshami-Ahmed — `tarek.elshami@urjc.es`
