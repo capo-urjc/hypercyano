@@ -140,11 +140,12 @@ hypercyano/
 ```
 
 ## License
-HyperCyano offers two licensing options to suit different needs:
 
-**AGPL-3.0 License**: This OSI-approved open-source license is perfect for students, researchers, and enthusiasts. It encourages open collaboration and knowledge sharing. See the [LICENSE](https://github.com/capo-urjc/hypercyano/tree/main?tab=AGPL-3.0-1-ov-file) file for full details.
+This software is available under two licensing options:
 
-**Enterprise License**: Designed for commercial use, this license permits using this software for commercial solutions, bypassing the open-source requirements of AGPL-3.0. Please contact us for more details.
+- **AGPL-3.0 License:** The source code is distributed under the GNU Affero General Public License v3.0, allowing use, modification, and redistribution under its terms. See the [LICENSE](LICENSE) file for details.
+
+- **Enterprise License:** A commercial licensing option is available for users who require different terms from those of the AGPL-3.0. Please contact the authors for further information.
 
 ## Acknowledgments
 
@@ -155,10 +156,10 @@ This work was supported by:
 
 ## Authors
 
-- Tarek Elshami-Ahmed (corresponding author) - `tarek.elshami@urjc.es`
-- Laura Llopis-Ibor - `laura.llopis@urjc.es`
-- Juan J. Pantrigo - `juanjose.pantrigo@urjc.es`
-- Alfredo Cuesta-Infante - `alfredo.cuesta@urjc.es`
-- Raúl Cabido - `raul.cabido@urjc.es`
+- Tarek Elshami-Ahmed — `tarek.elshami@urjc.es`
+- Laura Llopis-Ibor — `laura.llopis@urjc.es`
+- Juan J. Pantrigo — `juanjose.pantrigo@urjc.es`
+- Alfredo Cuesta-Infante — `alfredo.cuesta@urjc.es`
+- Raúl Cabido — `raul.cabido@urjc.es`
 
-Universidad Rey Juan Carlos, Móstoles, Spain
+Universidad Rey Juan Carlos, Móstoles, Spain.
